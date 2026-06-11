@@ -48,7 +48,7 @@ export default function RitualsPage() {
     return (
         <div className="w-full min-h-screen bg-black text-white lg:px-16 px-4 sm:px-7 py-16 flex flex-col justify-between">
 
-            <div className="max-w-7xl mx-auto w-full mb-16 border-b border-zinc-900 pb-10">
+            <div className="max-w-7xl mx-auto w-full border-b border-zinc-900 pb-10">
                 <span className="text-[10px] tracking-widest text-amber-300 font-mono font-bold uppercase block mb-2">
                     Operational Matrix
                 </span>
