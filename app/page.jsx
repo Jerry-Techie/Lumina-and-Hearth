@@ -70,7 +70,7 @@ export default function LandingPage() {
 
   return (
     <div className="w-full bg-black text-white px-4 sm:px-7 min-h-screen font-sans">
-      <div className="flex flex-col items-center justify-center mt-20 sm:mt-28">
+      <div className="flex flex-col items-center justify-center pt-20 sm:pt-28">
         <h1 className="text-white text-4xl sm:text-6xl max-w-2xl text-center font-serif tracking-wide leading-tight">
           Dine in the <span className="text-amber-300">Glow</span> of the Hearth.
         </h1>
@@ -79,13 +79,13 @@ export default function LandingPage() {
         </p>
         <div className="pt-6 flex gap-4">
           <button
-            onClick={() => router.push("/login")}
+            onClick={() => router.push("/screens/stories")}
             className="text-sm text-black bg-amber-300 px-5 py-2.5 rounded-md font-medium transition-all hover:bg-white hover:text-black cursor-pointer"
           >
             Experience the Flame
           </button>
           <button
-            onClick={() => router.push("/about")}
+            onClick={() => router.push("/screens/menu")}
             className="text-sm text-white bg-transparent px-5 py-2.5 rounded-md border border-amber-300/50 font-medium transition-all hover:bg-amber-300 hover:text-black cursor-pointer"
           >
             View the Menu
@@ -112,10 +112,9 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* BOOKING NODES */}
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8">
 
-          {/* Chef's Table Card */}
           <div className="relative md:col-span-2 h-64 rounded-lg overflow-hidden border border-zinc-800">
             <Image src={Lumina} alt="Lumina Hearth" fill className="object-cover opacity-40" />
             <div className="absolute inset-0 bg-linear-to-t from-black via-black/80 to-transparent p-6 flex flex-col justify-between">
