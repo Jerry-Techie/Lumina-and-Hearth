@@ -62,7 +62,7 @@ export default function RitualsPage() {
 
             <div className="max-w-7xl mx-auto w-full block sm:flex flex-row gap-12 items-start mb-16">
 
-                <div className="lg:col-span-5 bg-zinc-950/60 border border-zinc-900 rounded-2xl p-6 sm:p-8 w-1/2">
+                <div className="lg:col-span-5 bg-zinc-950/60 border border-zinc-900 rounded-2xl p-6 sm:p-8 sm:w-1/2 w-full">
                     <div className="mb-6">
                         <h2 className="text-xl font-serif text-zinc-100">Manifest Attendance</h2>
                         <p className="text-xs text-zinc-500 mt-1">Submit parameters to request seat integration for seasonal laboratory analysis blocks.</p>
