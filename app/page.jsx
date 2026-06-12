@@ -7,12 +7,17 @@ import { FaAngleDoubleDown, FaArrowDown, FaDotCircle, FaStar, FaBell, FaLeaf } f
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Lumina from "../public/src/Lumina.jpg";
+import { client } from "../public/src/utils/sanity";
 
 export default function LandingPage() {
   const router = useRouter();
 
   const [selectedDiet, setSelectedDiet] = useState("all");
   const [showWaitlistModal, setShowWaitlistModal] = useState(false);
+
+  const [menu, setMenu] = useState([]);
+  const [chapters, setChapters] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const count1 = useMotionValue(0);
   const count2 = useMotionValue(0);
@@ -22,16 +27,44 @@ export default function LandingPage() {
   const round2 = useTransform(count2, (latest) => Math.round(latest));
   const round3 = useTransform(count3, (latest) => Math.round(latest));
 
-  const menu = [
-    { sn: '0', name: 'Stardust Oysters', description: 'Charcoal-infused salt, finger lime pearls', price: '$32', tags: ['seafood', 'gf'] },
-    { sn: '1', name: 'The Embark Duck Oysters', description: 'Honey-glazed over cherrywood, smoked parsnip', price: '$58', tags: ['meat'] },
-    { sn: '2', name: 'Celestial Sphere', description: 'Dark chocolate, gold leaf, meteor-smoke nitrogen', price: '$26', tags: ['v', 'gf'] },
-  ];
+  useEffect(() => {
+    async function fetchSanityData() {
+      try {
+        const query = `{
+          "menuItems": *[_type == "menuItem"] {
+            "sn": _id,
+            name,
+            description,
+            price,
+            tags
+          },
+          "chapters": *[_type == "chapter"] | order(era asc) {
+            era,
+            title,
+            focus,
+            description,
+            link
+          }
+        }`;
+
+        const data = await client.fetch(query);
+
+        if (data.menuItems.length > 0) setMenu(data.menuItems);
+        if (data.chapters.length > 0) setChapters(data.chapters);
+      } catch (error) {
+        console.error("Sanity connection dropped:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+
+    fetchSanityData();
+  }, []);
 
   useEffect(() => {
     const controls1 = animate(count1, 24, { duration: 3, ease: "easeOut" });
     const controls2 = animate(count2, 12, { duration: 3, ease: "easeOut" });
-    const controls3 = animate(count3, 82, { duration: 3, ease: "easeOut" }); 
+    const controls3 = animate(count3, 82, { duration: 3, ease: "easeOut" });
 
     return () => {
       controls1.stop();
@@ -42,31 +75,7 @@ export default function LandingPage() {
 
   const filteredMenu = selectedDiet === "all"
     ? menu
-    : menu.filter(item => item.tags.includes(selectedDiet));
-
-  const chapters = [
-    {
-      era: "01",
-      title: "The Seed of Ignition",
-      focus: "Hearth Foundation",
-      description: "Assembling a team of multi-disciplinary masons to erect a 4-ton zero-gas volcanic rock hearth capable of sustaining continuous heat signatures.",
-      link: "/blog/philosophy-of-the-eternal-ember"
-    },
-    {
-      era: "02",
-      title: "Mapping the Abyssal Thermal Grid",
-      focus: "Ingredient Science",
-      description: "Perfecting deep-sea cold chains with precision thermal storage containers to keep deep sea life elements pristine until fire impact.",
-      link: "/blog/sourcing-the-abyssal-catch"
-    },
-    {
-      era: "03",
-      title: "Alchemical Gastronomy Labs",
-      focus: "Molecular Preservation",
-      description: "Introducing automated monitoring configurations across charcoal silos to harvest volatile wood smoke essences natively.",
-      link: "/blog/alkalinity-in-modern-fermentation"
-    }
-    ];
+    : menu.filter(item => item.tags?.includes(selectedDiet));
 
   return (
     <div className="w-full bg-black text-white px-4 sm:px-7 min-h-screen font-sans">
@@ -112,9 +121,7 @@ export default function LandingPage() {
           </div>
         </div>
 
-
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8">
-
           <div className="relative md:col-span-2 h-64 rounded-lg overflow-hidden border border-zinc-800">
             <Image src={Lumina} alt="Lumina Hearth" fill className="object-cover opacity-40" />
             <div className="absolute inset-0 bg-linear-to-t from-black via-black/80 to-transparent p-6 flex flex-col justify-between">
@@ -186,7 +193,6 @@ export default function LandingPage() {
           <span className="text-[10px] tracking-widest text-amber-400 font-bold">SENSORY HIGHLIGHTS</span>
           <h2 className="text-3xl md:text-4xl font-serif mt-1 mb-4">A Peek at the Menu</h2>
 
-    
           <div className="flex gap-2 mb-6 border-b border-zinc-900 pb-3 text-xs">
             <button onClick={() => setSelectedDiet("all")} className={`px-3 py-1 rounded transition-colors ${selectedDiet === 'all' ? 'bg-amber-300 text-black font-medium' : 'text-gray-400 hover:text-white'}`}>All Creation</button>
             <button onClick={() => setSelectedDiet("gf")} className={`px-3 py-1 rounded transition-colors flex items-center gap-1 ${selectedDiet === 'gf' ? 'bg-amber-300 text-black font-medium' : 'text-gray-400 hover:text-white'}`}>Gluten Free</button>
@@ -194,7 +200,9 @@ export default function LandingPage() {
           </div>
 
           <div className="space-y-6">
-            {filteredMenu.map((item) => (
+            {isLoading ? (
+              <div className="text-xs text-zinc-600 animate-pulse font-mono">Calibrating menu alignments...</div>
+            ) : filteredMenu.map((item) => (
               <div key={item.sn} className="group">
                 <div className="flex justify-between items-baseline">
                   <h4 className="text-md font-serif group-hover:text-amber-300 transition-colors">{item.name}</h4>
@@ -204,7 +212,7 @@ export default function LandingPage() {
                 <p className="text-xs text-gray-400 mt-1 pl-1">{item.description}</p>
               </div>
             ))}
-            {filteredMenu.length === 0 && (
+            {!isLoading && filteredMenu.length === 0 && (
               <p className="text-xs text-gray-500 italic">No stellar alignments matching this filter tonight.</p>
             )}
           </div>
@@ -244,6 +252,7 @@ export default function LandingPage() {
           </div>
         </div>
       )}
+
       <div className="w-full max-w-7xl mx-auto px-4 my-24">
         <div className="border-b border-zinc-900 pb-4 mb-16 text-center md:text-left">
           <span className="text-[10px] tracking-widest text-amber-400 font-mono font-bold uppercase">Chronological Trajectory</span>
@@ -251,7 +260,9 @@ export default function LandingPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative before:absolute before:top-4 before:left-4 md:before:left-0 before:w-0.5 md:before:w-full md:before:h-0.5 before:h-full before:bg-zinc-900">
-          {chapters.map((chap) => (
+          {isLoading ? (
+            <div className="text-xs text-zinc-600 animate-pulse font-mono col-span-3">Reading historical archives...</div>
+          ) : chapters.map((chap) => (
             <div key={chap.era} className="relative pl-8 md:pl-0 md:pt-8 group">
               <div className="absolute top-3 left-3 md:top-1.5 md:left-0 w-3 h-3 rounded-full bg-black border-2 border-amber-300 z-10 group-hover:bg-amber-300 transition-colors duration-300" />
 
@@ -272,7 +283,7 @@ export default function LandingPage() {
               </p>
 
               <Link
-                href={chap.link}
+                href={chap.link || "#"}
                 className="text-[11px] font-mono font-bold text-zinc-400 hover:text-amber-300 transition-colors tracking-wide uppercase mt-4 inline-block"
               >
                 Analyze Records &rarr;
@@ -294,7 +305,6 @@ export default function LandingPage() {
         <h3 className="pt-8 font-serif text-md text-white tracking-wider">Chef Julian Vane</h3>
         <span className="text-[10px] tracking-widest text-amber-400 font-bold mt-1">MASTER OF THE ETERNAL EMBER</span>
       </div>
-
     </div>
   );
 }

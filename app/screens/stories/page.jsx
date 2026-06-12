@@ -47,7 +47,7 @@ export default function StoryPage() {
   return (
     <div className="w-full min-h-screen bg-black text-white lg:px-16 px-4 sm:px-7 py-16 flex flex-col justify-between">
 
-      <div className="max-w-7xl mx-auto w-full mb-16">
+      <div className="max-w-7xl mx-auto w-full mb-7">
         <span className="text-[10px] tracking-widest text-amber-300 font-mono font-bold uppercase block mb-2">
           Architectural Lineage
         </span>
@@ -59,7 +59,7 @@ export default function StoryPage() {
         </p>
       </div>
 
-      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-start mb-20">
+      <div className="max-w-7xl mx-auto w-full grid grid-cols-1 lg:grid-cols-12 gap-12 items-start mb-0">
 
         <div className="lg:col-span-4 space-y-4">
           <div className="text-[10px] tracking-wider font-mono text-zinc-500 uppercase pb-2 border-b border-zinc-900">
