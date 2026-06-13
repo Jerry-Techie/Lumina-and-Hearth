@@ -8,7 +8,7 @@ import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 import { useRouter } from "next/navigation";
 import Lumina from "../public/src/Lumina.jpg";
 import { client } from "../public/src/utils/sanity";
-
+export const revalidate = 10; 
 export default function LandingPage() {
   const router = useRouter();
 
